@@ -23,7 +23,8 @@ php artisan migrate --seed
 npm run build          # or `npm run dev` while developing
 php artisan serve
 ```
-Seeded demo logins (change/delete before going live): `admin@witty.test` / `coordinator@witty.test`, password `password`.
+Seeded logins: set `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD` and `SEED_COORDINATOR_EMAIL`/`SEED_COORDINATOR_PASSWORD` in `.env`
+(defaults: `admin@cozaglobal.org`, `coordinator@cozaglobal.org`). If a password is not set, a random one is generated and printed once by the seeder.
 
 ## Document generation
 `app/Services/ReportDocxBuilder.php` builds the Word file with PHPWord, mirroring the original layout
