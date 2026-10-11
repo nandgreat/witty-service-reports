@@ -58,7 +58,7 @@ class ReportFlowTest extends TestCase
         $this->assertSame('approved', $report->fresh()->status);
     }
 
-    public function test_docx_download_and_other_coordinators_are_blocked(): void
+    public function test_pdf_download_and_other_coordinators_are_blocked(): void
     {
         $this->seed(DatabaseSeeder::class);
         $coord = User::where('role', 'coordinator')->first();
@@ -68,7 +68,7 @@ class ReportFlowTest extends TestCase
         $report = Report::firstOrFail();
 
         $res = $this->get("/coordinator/reports/{$report->id}/download")->assertOk();
-        $this->assertStringContainsString('Witty_Inventions_Service_Report_-_7DG_Oct_04_2026.docx', $res->headers->get('content-disposition'));
+        $this->assertStringContainsString('Witty_Inventions_Service_Report_-_7DG_Oct_04_2026.pdf', $res->headers->get('content-disposition'));
 
         $this->actingAs($other)->get("/coordinator/reports/{$report->id}/download")->assertForbidden();
     }

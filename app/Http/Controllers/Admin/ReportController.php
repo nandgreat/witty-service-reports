@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Report;
 use App\Models\ServiceType;
 use App\Models\User;
-use App\Services\ReportDocxBuilder;
+use App\Services\ReportPdfBuilder;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -65,10 +65,10 @@ class ReportController extends Controller
         return back()->with('success', $data['decision'] === 'approve' ? 'Report approved.' : 'Report returned to the coordinator.');
     }
 
-    public function download(Report $report, ReportDocxBuilder $builder)
+    public function download(Report $report, ReportPdfBuilder $builder)
     {
         $this->service->load($report);
-        $path = tempnam(sys_get_temp_dir(), 'rpt').'.docx';
+        $path = tempnam(sys_get_temp_dir(), 'rpt').'.pdf';
         $builder->build($report, $path);
 
         return response()->download($path, $builder->filename($report))->deleteFileAfterSend();

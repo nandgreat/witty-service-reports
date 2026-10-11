@@ -1,13 +1,13 @@
 # Witty Inventions – Service Report Generator
 
-Laravel 13 + Inertia/React app that produces the **Witty Inventions Service Report** (.docx) for every service.
+Laravel 13 + Inertia/React app that produces the **Witty Inventions Service Report** (PDF) for every service.
 
 ## Interfaces
 
 | | URL | Who | What they do |
 |---|---|---|---|
-| **Admin** | `/admin` | Admin users | Review/approve/return reports, download .docx, manage service types, task list, platforms, worker roster and users |
-| **Service coordinator** | `/coordinator/reports` | Coordinators | Create, edit, duplicate and submit their own reports; preview and download .docx |
+| **Admin** | `/admin` | Admin users | Review/approve/return reports, download PDF, manage service types, task list, platforms, worker roster and users |
+| **Service coordinator** | `/coordinator/reports` | Coordinators | Create, edit, duplicate and submit their own reports; preview and download PDF |
 
 Report workflow: `draft → submitted → approved` (or `returned` with a note, which unlocks editing again).
 
@@ -27,7 +27,7 @@ Seeded logins: set `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD` and `SEED_COORDINATO
 (defaults: `admin@cozaglobal.org`, `coordinator@cozaglobal.org`). If a password is not set, a random one is generated and printed once by the seeder.
 
 ## Document generation
-`app/Services/ReportDocxBuilder.php` builds the Word file with PHPWord, mirroring the original layout
+`app/Services/ReportPdfBuilder.php` builds the PDF (PHPWord layout rendered through Dompdf), mirroring the original layout
 (A4, Arial, purple `#5A2D82` headings/table headers, header and footer, 7 numbered sections).
 Branding strings live in `config/report.php`; the logo is `resources/logo.png`.
 

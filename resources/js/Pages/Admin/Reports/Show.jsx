@@ -16,7 +16,7 @@ export default function Show({ report }) {
             title={<span className="flex flex-wrap items-center gap-3">{report.service_type} · {report.service_date_label} <StatusBadge status={report.status} /></span>}
             actions={<>
                 <Button href="/admin/reports" variant="ghost">← All reports</Button>
-                <Button as="a" href={`${base}/download`}>Download .docx</Button>
+                <Button as="a" href={`${base}/download`}>Download PDF</Button>
                 <Button variant="danger" onClick={() => confirm('Delete this report permanently?') && router.delete(base)}>Delete</Button>
             </>}>
             <Head title="Report" />

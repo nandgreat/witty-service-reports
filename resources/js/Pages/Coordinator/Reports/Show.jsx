@@ -12,7 +12,7 @@ export default function Show({ report, editable }) {
                 <Button href="/coordinator/reports" variant="ghost">← All reports</Button>
                 {editable && <Button href={`${base}/edit`} variant="secondary">Edit</Button>}
                 <Button variant="secondary" onClick={() => router.post(`${base}/duplicate`)}>Duplicate</Button>
-                <Button as="a" href={`${base}/download`} variant={editable ? 'secondary' : 'primary'}>Download .docx</Button>
+                <Button as="a" href={`${base}/download`} variant={editable ? 'secondary' : 'primary'}>Download PDF</Button>
                 {editable && <Button onClick={() => confirm('Submit this report to admin? You will not be able to edit it unless it is returned.') && router.post(`${base}/submit`)}>Submit to admin</Button>}
             </>}>
             <Head title="Report" />

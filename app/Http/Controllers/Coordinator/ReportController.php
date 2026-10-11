@@ -7,7 +7,7 @@ use App\Http\Requests\ReportRequest;
 use App\Models\Report;
 use App\Models\ServiceType;
 use App\Models\Worker;
-use App\Services\ReportDocxBuilder;
+use App\Services\ReportPdfBuilder;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -97,11 +97,11 @@ class ReportController extends Controller
         return redirect()->route('coordinator.reports.index')->with('success', 'Report deleted.');
     }
 
-    public function download(Request $request, Report $report, ReportDocxBuilder $builder)
+    public function download(Request $request, Report $report, ReportPdfBuilder $builder)
     {
         $this->own($request, $report);
         $this->service->load($report);
-        $path = tempnam(sys_get_temp_dir(), 'rpt').'.docx';
+        $path = tempnam(sys_get_temp_dir(), 'rpt').'.pdf';
         $builder->build($report, $path);
 
         return response()->download($path, $builder->filename($report))->deleteFileAfterSend();
