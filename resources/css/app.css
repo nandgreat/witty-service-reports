@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+
+@source '../views/**/*.blade.php';
+@source '../js/**/*.jsx';
+
+@theme {
+    --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    --color-brand-50: #f6f1fb;
+    --color-brand-100: #ebdff6;
+    --color-brand-200: #d6bfee;
+    --color-brand-500: #7a4aa8;
+    --color-brand-600: #6a3b96;
+    --color-brand-700: #5a2d82;
+    --color-brand-800: #47226a;
+}
+
+@layer base {
+    input, select, textarea { @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm
+        focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-200; }
+    input[type='checkbox'] { @apply w-auto h-4 w-4 rounded border-slate-300 text-brand-700 shadow-none; }
+    label { @apply block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1; }
+}
