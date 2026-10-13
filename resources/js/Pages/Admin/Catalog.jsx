@@ -25,12 +25,13 @@ const FIELDS = {
     workers: [
         ['name', 'Name', 'text'],
         ['role', 'Role (e.g. HOD)', 'text'],
+        ['church_branch', 'Church branch', 'branch'],
     ],
 };
 
 const blank = (fields) => ({ ...Object.fromEntries(fields.map(([k, , t]) => [k, t === 'number' ? 0 : ''])), is_active: true });
 
-function Editor({ catalog, fields, item, serviceTypes, onDone }) {
+function Editor({ catalog, fields, item, serviceTypes, branches = [], onDone }) {
     const form = useForm(item ? { ...blank(fields), ...item, service_type_id: item.service_type_id ?? '' } : blank(fields));
     const url = `/admin/catalog/${catalog}`;
     const submit = (e) => {
@@ -51,6 +52,11 @@ function Editor({ catalog, fields, item, serviceTypes, onDone }) {
                             <option value="">All service types</option>
                             {serviceTypes.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
                         </select>
+                    ) : type === 'branch' ? (
+                        <>
+                            <input type="text" list="church-branches" placeholder="e.g. Abuja, Lagos…" value={form.data[key] ?? ''} onChange={(e) => form.setData(key, e.target.value)} />
+                            <datalist id="church-branches">{branches.map((b) => <option key={b} value={b} />)}</datalist>
+                        </>
                     ) : (
                         <input type={type} value={form.data[key] ?? ''} onChange={(e) => form.setData(key, e.target.value)} />
                     )}
@@ -67,7 +73,7 @@ function Editor({ catalog, fields, item, serviceTypes, onDone }) {
     );
 }
 
-export default function Catalog({ catalog, title, hint, items, serviceTypes }) {
+export default function Catalog({ catalog, title, hint, items, serviceTypes, branches = [] }) {
     const [editing, setEditing] = useState(null);
     const [adding, setAdding] = useState(false);
     const fields = FIELDS[catalog];
@@ -80,12 +86,12 @@ export default function Catalog({ catalog, title, hint, items, serviceTypes }) {
             <Head title={title} />
             <p className="mb-4 text-sm text-slate-600">{hint}</p>
             {errors?.delete && <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700">{errors.delete}</div>}
-            {adding && <Card title={`Add to ${title.toLowerCase()}`} className="mb-4"><Editor key="new" {...{ catalog, fields, serviceTypes }} onDone={() => setAdding(false)} /></Card>}
+            {adding && <Card title={`Add to ${title.toLowerCase()}`} className="mb-4"><Editor key="new" {...{ catalog, fields, serviceTypes, branches }} onDone={() => setAdding(false)} /></Card>}
             <div className="space-y-2">
                 {items.map((it) => (
                     <Card key={it.id} className={it.is_active ? '' : 'opacity-60'}>
                         {editing === it.id ? (
-                            <Editor {...{ catalog, fields, serviceTypes }} item={it} onDone={() => setEditing(null)} />
+                            <Editor {...{ catalog, fields, serviceTypes, branches }} item={it} onDone={() => setEditing(null)} />
                         ) : (
                             <div className="flex flex-wrap items-center justify-between gap-3">
                                 <div className="min-w-0">
@@ -97,7 +103,7 @@ export default function Catalog({ catalog, title, hint, items, serviceTypes }) {
                                     <div className="truncate text-xs text-slate-500">
                                         {catalog === 'service-types' && it.short_name}
                                         {catalog === 'tasks' && `Applies to: ${typeName(it.service_type_id)}`}
-                                        {catalog === 'workers' && (it.role || 'Worker')}
+                                        {catalog === 'workers' && [it.role || 'Worker', it.church_branch].filter(Boolean).join(' · ')}
                                         {catalog === 'platforms' && `Order ${it.sort_order}`}
                                     </div>
                                 </div>

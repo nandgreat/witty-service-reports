@@ -118,7 +118,7 @@ class ReportController extends Controller
         return [
             'serviceTypes' => ServiceType::where('is_active', true)->orderBy('id')
                 ->get(['id', 'name', 'default_summary', 'default_conclusion']),
-            'workers' => Worker::where('is_active', true)->orderBy('name')->get(['name', 'role']),
+            'workers' => Worker::where('is_active', true)->orderBy('name')->get(['name', 'role', 'church_branch']),
             'severities' => config('report.severities'),
             'incidentStatuses' => config('report.incident_statuses'),
             'broadcastStatuses' => config('report.broadcast_statuses'),

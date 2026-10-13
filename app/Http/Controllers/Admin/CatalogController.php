@@ -58,6 +58,7 @@ class CatalogController extends Controller
                 'rules' => [
                     'name' => ['required', 'string', 'max:120'],
                     'role' => ['nullable', 'string', 'max:60'],
+                    'church_branch' => ['nullable', 'string', 'max:120'],
                     'is_active' => ['boolean'],
                 ],
             ],
@@ -79,6 +80,9 @@ class CatalogController extends Controller
             'hint' => $c['hint'],
             'items' => $q->get(),
             'serviceTypes' => ServiceType::orderBy('id')->get(['id', 'name']),
+            'branches' => $catalog === 'workers'
+                ? Worker::whereNotNull('church_branch')->distinct()->orderBy('church_branch')->pluck('church_branch')
+                : [],
         ]);
     }
 

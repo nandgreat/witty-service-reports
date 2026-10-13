@@ -155,7 +155,7 @@ export default function Form({ report, serviceTypes, workers, severities, incide
                             <button type="button" key={w.name} onClick={() => toggleWorker(w)}
                                 className={`rounded-full border px-3 py-1.5 text-sm ${present.has(w.name)
                                     ? 'border-brand-700 bg-brand-700 text-white' : 'border-slate-300 bg-white text-slate-700 hover:border-brand-500'}`}>
-                                {w.name}{w.role ? ` · ${w.role}` : ''}
+                                {w.name}{w.role ? ` · ${w.role}` : ''}{w.church_branch ? ` · ${w.church_branch}` : ''}
                             </button>
                         ))}
                     </div>
