@@ -33,7 +33,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('users/{user}/toggle', [Admin\UserController::class, 'toggle'])->name('users.toggle');
     Route::delete('users/{user}', [Admin\UserController::class, 'destroy'])->name('users.destroy');
 
-    Route::prefix('catalog/{catalog}')->whereIn('catalog', ['service-types', 'tasks', 'platforms', 'workers'])->group(function () {
+    Route::prefix('catalog/{catalog}')->whereIn('catalog', ['service-types', 'tasks', 'platforms', 'church-branches', 'workers'])->group(function () {
         Route::get('/', [Admin\CatalogController::class, 'index'])->name('catalog.index');
         Route::post('/', [Admin\CatalogController::class, 'store'])->name('catalog.store');
         Route::put('{id}', [Admin\CatalogController::class, 'update'])->name('catalog.update');

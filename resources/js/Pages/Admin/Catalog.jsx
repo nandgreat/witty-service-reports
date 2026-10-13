@@ -22,22 +22,30 @@ const FIELDS = {
         ['name', 'Platform', 'text'],
         ['sort_order', 'Order', 'number'],
     ],
+    'church-branches': [
+        ['name', 'Branch name', 'text'],
+        ['sort_order', 'Order', 'number'],
+    ],
     workers: [
         ['name', 'Name', 'text'],
         ['role', 'Role (e.g. HOD)', 'text'],
-        ['church_branch', 'Church branch', 'branch'],
+        ['church_branch_id', 'Church branch', 'branch'],
     ],
 };
 
 const blank = (fields) => ({ ...Object.fromEntries(fields.map(([k, , t]) => [k, t === 'number' ? 0 : ''])), is_active: true });
 
 function Editor({ catalog, fields, item, serviceTypes, branches = [], onDone }) {
-    const form = useForm(item ? { ...blank(fields), ...item, service_type_id: item.service_type_id ?? '' } : blank(fields));
+    const form = useForm(item ? { ...blank(fields), ...item, service_type_id: item.service_type_id ?? '', church_branch_id: item.church_branch_id ?? '' } : blank(fields));
     const url = `/admin/catalog/${catalog}`;
     const submit = (e) => {
         e.preventDefault();
         const opts = { preserveScroll: true, onSuccess: () => { form.reset(); onDone?.(); } };
-        const payload = (d) => ({ ...d, service_type_id: d.service_type_id === '' ? null : d.service_type_id });
+        const payload = (d) => ({
+            ...d,
+            service_type_id: d.service_type_id === '' ? null : d.service_type_id,
+            church_branch_id: d.church_branch_id === '' ? null : d.church_branch_id,
+        });
         form.transform(payload);
         item ? form.put(`${url}/${item.id}`, opts) : form.post(url, opts);
     };
@@ -53,10 +61,10 @@ function Editor({ catalog, fields, item, serviceTypes, branches = [], onDone }) 
                             {serviceTypes.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
                         </select>
                     ) : type === 'branch' ? (
-                        <>
-                            <input type="text" list="church-branches" placeholder="e.g. Abuja, Lagos…" value={form.data[key] ?? ''} onChange={(e) => form.setData(key, e.target.value)} />
-                            <datalist id="church-branches">{branches.map((b) => <option key={b} value={b} />)}</datalist>
-                        </>
+                        <select value={form.data[key] ?? ''} onChange={(e) => form.setData(key, e.target.value)}>
+                            <option value="">No branch</option>
+                            {branches.filter((b) => b.is_active || b.id === item?.church_branch_id).map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+                        </select>
                     ) : (
                         <input type={type} value={form.data[key] ?? ''} onChange={(e) => form.setData(key, e.target.value)} />
                     )}
@@ -103,8 +111,8 @@ export default function Catalog({ catalog, title, hint, items, serviceTypes, bra
                                     <div className="truncate text-xs text-slate-500">
                                         {catalog === 'service-types' && it.short_name}
                                         {catalog === 'tasks' && `Applies to: ${typeName(it.service_type_id)}`}
-                                        {catalog === 'workers' && [it.role || 'Worker', it.church_branch].filter(Boolean).join(' · ')}
-                                        {catalog === 'platforms' && `Order ${it.sort_order}`}
+                                        {catalog === 'workers' && [it.role || 'Worker', branches.find((b) => b.id === it.church_branch_id)?.name].filter(Boolean).join(' · ')}
+                                        {(catalog === 'platforms' || catalog === 'church-branches') && `Order ${it.sort_order}`}
                                     </div>
                                 </div>
                                 <div className="flex gap-3 text-sm">

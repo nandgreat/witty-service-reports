@@ -7,6 +7,7 @@ const NAV = {
         ['Service types', '/admin/catalog/service-types'],
         ['Service tasks', '/admin/catalog/tasks'],
         ['Platforms', '/admin/catalog/platforms'],
+        ['Church branches', '/admin/catalog/church-branches'],
         ['Workers', '/admin/catalog/workers'],
         ['Users', '/admin/users'],
     ],

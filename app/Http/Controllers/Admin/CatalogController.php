@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChurchBranch;
 use App\Models\Platform;
 use App\Models\ServiceType;
 use App\Models\TaskTemplate;
@@ -10,7 +11,7 @@ use App\Models\Worker;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-/** One controller for the four admin-managed lists (service types, tasks, platforms, workers). */
+/** One controller for the four admin-managed lists (service types, tasks, platforms, church branches, workers). */
 class CatalogController extends Controller
 {
     private function config(string $key): array
@@ -51,6 +52,16 @@ class CatalogController extends Controller
                     'is_active' => ['boolean'],
                 ],
             ],
+            'church-branches' => [
+                'model' => ChurchBranch::class, 'title' => 'Church branches',
+                'hint' => 'Branches a worker can belong to. Pick one when adding or editing a worker.',
+                'order' => ['sort_order', 'id'],
+                'rules' => [
+                    'name' => ['required', 'string', 'max:120'],
+                    'sort_order' => ['nullable', 'integer', 'min:0'],
+                    'is_active' => ['boolean'],
+                ],
+            ],
             'workers' => [
                 'model' => Worker::class, 'title' => 'Workers',
                 'hint' => 'Roster that coordinators pick from for attendance and task assignment.',
@@ -58,7 +69,7 @@ class CatalogController extends Controller
                 'rules' => [
                     'name' => ['required', 'string', 'max:120'],
                     'role' => ['nullable', 'string', 'max:60'],
-                    'church_branch' => ['nullable', 'string', 'max:120'],
+                    'church_branch_id' => ['nullable', 'exists:church_branches,id'],
                     'is_active' => ['boolean'],
                 ],
             ],
@@ -81,7 +92,7 @@ class CatalogController extends Controller
             'items' => $q->get(),
             'serviceTypes' => ServiceType::orderBy('id')->get(['id', 'name']),
             'branches' => $catalog === 'workers'
-                ? Worker::whereNotNull('church_branch')->distinct()->orderBy('church_branch')->pluck('church_branch')
+                ? ChurchBranch::orderBy('sort_order')->orderBy('id')->get(['id', 'name', 'is_active'])
                 : [],
         ]);
     }
@@ -115,6 +126,9 @@ class CatalogController extends Controller
         $c = $this->config($catalog);
         if ($catalog === 'service-types' && \App\Models\Report::where('service_type_id', $id)->exists()) {
             return back()->withErrors(['delete' => 'This service type has reports. Deactivate it instead of deleting.']);
+        }
+        if ($catalog === 'church-branches' && Worker::where('church_branch_id', $id)->exists()) {
+            return back()->withErrors(['delete' => 'Workers belong to this branch. Disable it instead of deleting.']);
         }
         $c['model']::findOrFail($id)->delete();
 

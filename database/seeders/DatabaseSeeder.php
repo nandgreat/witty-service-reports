@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ChurchBranch;
 use App\Models\Platform;
 use App\Models\ServiceType;
 use App\Models\TaskTemplate;
@@ -61,6 +62,10 @@ class DatabaseSeeder extends Seeder
             foreach (['YouTube · COZATV', 'YouTube · Biodun Fatoyinbo', 'Facebook'] as $i => $p) {
                 Platform::create(['name' => $p, 'sort_order' => $i + 1]);
             }
+        }
+
+        foreach (['Guzape', 'Gwarimpa', 'Maraba', 'Maitama', 'Wuse Zone 5', 'Kuje', 'Karu', 'Gwagwalada', 'Lugbe FHA', 'Kubwa'] as $i => $branch) {
+            ChurchBranch::firstOrCreate(['name' => $branch], ['sort_order' => $i + 1]);
         }
 
         $members = [
